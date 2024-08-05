@@ -4,6 +4,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Star, Heart } from "lucide-react"
 import Link from 'next/link'
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 
 export default function ListingCard({ listing }) {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -18,8 +19,8 @@ export default function ListingCard({ listing }) {
       whileHover={{ scale: 1.05 }}
       transition={{ duration: 0.3 }}
     >
-      <Link href={`/listings/${listing.id}`}>
-        <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 relative">
+      <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 relative">
+        <Link href={`/listings/${listing.id}`}>
           <AspectRatio ratio={4/3}>
             <img
               src={listing.image}
@@ -27,13 +28,15 @@ export default function ListingCard({ listing }) {
               className="object-cover w-full h-full"
             />
           </AspectRatio>
-          <button
-            onClick={toggleFavorite}
-            className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md"
-          >
-            <Heart className={`h-5 w-5 ${isFavorite ? 'text-red-500 fill-current' : 'text-gray-500'}`} />
-          </button>
-          <CardContent className="p-4">
+        </Link>
+        <button
+          onClick={toggleFavorite}
+          className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md"
+        >
+          <Heart className={`h-5 w-5 ${isFavorite ? 'text-red-500 fill-current' : 'text-gray-500'}`} />
+        </button>
+        <CardContent className="p-4">
+          <Link href={`/listings/${listing.id}`}>
             <h3 className="font-semibold text-lg mb-1">{listing.title}</h3>
             <p className="text-sm text-gray-500 mb-2">{listing.location}</p>
             <div className="flex items-center mb-2">
@@ -41,12 +44,13 @@ export default function ListingCard({ listing }) {
               <span className="text-sm font-medium">{listing.rating}</span>
               <span className="text-sm text-gray-500 ml-1">({listing.reviews} reviews)</span>
             </div>
-          </CardContent>
-          <CardFooter className="p-4 pt-0">
-            <p className="text-lg font-bold">${listing.price} <span className="text-sm font-normal">/ night</span></p>
-          </CardFooter>
-        </Card>
-      </Link>
+          </Link>
+        </CardContent>
+        <CardFooter className="p-4 pt-0 flex justify-between items-center">
+          <p className="text-lg font-bold">${listing.price} <span className="text-sm font-normal">/ night</span></p>
+          <Button size="sm">View Details</Button>
+        </CardFooter>
+      </Card>
     </motion.div>
   )
 }

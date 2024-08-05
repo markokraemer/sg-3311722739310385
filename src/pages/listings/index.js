@@ -1,35 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import ListingCard from '@/components/ListingCard';
-import { featuredListings } from '@/data/listings';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { Select } from '@/components/ui/select';
+import { fetchListings } from '@/lib/api';
 
 export default function Listings() {
   const [searchTerm, setSearchTerm] = useState('');
   const [priceFilter, setPriceFilter] = useState('');
-  const [filteredListings, setFilteredListings] = useState(featuredListings);
-  const [isLoading, setIsLoading] = useState(false);
+  const [listings, setListings] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const filtered = featuredListings.filter(listing =>
-        (listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        listing.location.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        (priceFilter === '' || listing.price <= parseInt(priceFilter))
-      );
-      setFilteredListings(filtered);
+      const filteredListings = await fetchListings(searchTerm, priceFilter);
+      setListings(filteredListings);
     } catch (err) {
       setError('An error occurred while searching. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, []);
 
   return (
     <Layout>
@@ -65,11 +65,15 @@ export default function Listings() {
           </Button>
         </div>
         {error && <p className="text-red-500 mb-4">{error}</p>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredListings.map((listing) => (
-            <ListingCard key={listing.id} listing={listing} />
-          ))}
-        </div>
+        {isLoading ? (
+          <p>Loading listings...</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {listings.map((listing) => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
+          </div>
+        )}
       </div>
     </Layout>
   );
