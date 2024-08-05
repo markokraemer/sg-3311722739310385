@@ -1,4 +1,6 @@
 import Head from 'next/head';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +11,16 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 export default function Home() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const router = useRouter();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      router.push(`/listings?search=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  };
+
   return (
     <Layout>
       <Head>
@@ -40,7 +52,8 @@ export default function Home() {
           >
             Search low prices on homes, apartments, and much more...
           </motion.p>
-          <motion.div 
+          <motion.form 
+            onSubmit={handleSearch}
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6 }}
@@ -50,11 +63,13 @@ export default function Home() {
               type="text"
               placeholder="Where are you going?"
               className="flex-grow border-none focus:ring-0"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <Button size="icon" className="rounded-full">
+            <Button type="submit" size="icon" className="rounded-full">
               <Search className="h-5 w-5" />
             </Button>
-          </motion.div>
+          </motion.form>
         </div>
       </motion.div>
 
