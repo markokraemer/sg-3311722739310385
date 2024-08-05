@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import ListingCard from '@/components/ListingCard';
 import { featuredListings } from '@/data/listings';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -26,9 +27,14 @@ export default function Home() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-3xl font-bold mb-8">Featured Listings</h2>
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold">Featured Listings</h2>
+          <Link href="/listings" className="text-primary hover:underline">
+            View all listings
+          </Link>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredListings.map((listing) => (
+          {featuredListings.slice(0, 6).map((listing) => (
             <ListingCard key={listing.id} listing={listing} />
           ))}
         </div>
