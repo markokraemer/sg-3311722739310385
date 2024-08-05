@@ -11,14 +11,24 @@ export default function Listings() {
   const [searchTerm, setSearchTerm] = useState('');
   const [priceFilter, setPriceFilter] = useState('');
   const [filteredListings, setFilteredListings] = useState(featuredListings);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleSearch = () => {
-    const filtered = featuredListings.filter(listing =>
-      (listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      listing.location.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (priceFilter === '' || listing.price <= parseInt(priceFilter))
-    );
-    setFilteredListings(filtered);
+    setIsLoading(true);
+    setError(null);
+    try {
+      const filtered = featuredListings.filter(listing =>
+        (listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        listing.location.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        (priceFilter === '' || listing.price <= parseInt(priceFilter))
+      );
+      setFilteredListings(filtered);
+    } catch (err) {
+      setError('An error occurred while searching. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -49,11 +59,12 @@ export default function Listings() {
               <option value="500">Up to $500</option>
             </Select>
           </div>
-          <Button onClick={handleSearch}>
+          <Button onClick={handleSearch} disabled={isLoading}>
             <Search className="h-4 w-4 mr-2" />
-            Search
+            {isLoading ? 'Searching...' : 'Search'}
           </Button>
         </div>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredListings.map((listing) => (
             <ListingCard key={listing.id} listing={listing} />

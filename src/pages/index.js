@@ -39,6 +39,26 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      <div className="bg-gray-100 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold mb-8 text-center">Why Choose Us</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <h3 className="text-xl font-semibold mb-2">Wide Selection</h3>
+              <p>Choose from millions of unique homes and experiences.</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-semibold mb-2">Best Prices</h3>
+              <p>Find great deals and special offers on accommodations.</p>
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-semibold mb-2">24/7 Support</h3>
+              <p>Our customer support team is always here to help.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </Layout>
   );
 }
