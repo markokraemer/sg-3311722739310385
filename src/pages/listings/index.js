@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import ListingCard from '@/components/ListingCard';
+import ListingSkeleton from '@/components/ListingSkeleton';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
@@ -65,15 +66,14 @@ export default function Listings() {
           </Button>
         </div>
         {error && <p className="text-red-500 mb-4">{error}</p>}
-        {isLoading ? (
-          <p>Loading listings...</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {listings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {isLoading
+            ? Array(6).fill().map((_, index) => <ListingSkeleton key={index} />)
+            : listings.map((listing) => (
+                <ListingCard key={listing.id} listing={listing} />
+              ))
+          }
+        </div>
       </div>
     </Layout>
   );

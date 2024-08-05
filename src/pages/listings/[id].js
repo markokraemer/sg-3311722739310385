@@ -1,23 +1,37 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
-import { featuredListings } from '@/data/listings';
 import ReviewForm from '@/components/ReviewForm';
+import { fetchListingById } from '@/lib/api';
 
 export default function ListingDetails() {
   const router = useRouter();
   const { id } = router.query;
+  const [listing, setListing] = useState(null);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [guests, setGuests] = useState(1);
   const [reviews, setReviews] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const listing = featuredListings.find(l => l.id === parseInt(id));
-
-  if (!listing) return <div>Loading...</div>;
+  useEffect(() => {
+    if (id) {
+      setIsLoading(true);
+      fetchListingById(parseInt(id))
+        .then(data => {
+          setListing(data);
+          setIsLoading(false);
+        })
+        .catch(err => {
+          setError('Failed to fetch listing details');
+          setIsLoading(false);
+        });
+    }
+  }, [id]);
 
   const handleBooking = () => {
     router.push(`/booking-confirmation?listingId=${id}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&guests=${guests}`);
@@ -26,6 +40,10 @@ export default function ListingDetails() {
   const handleReviewSubmit = (review) => {
     setReviews([...reviews, review]);
   };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!listing) return <div>Listing not found</div>;
 
   return (
     <Layout>

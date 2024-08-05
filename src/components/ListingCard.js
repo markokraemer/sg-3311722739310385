@@ -29,12 +29,13 @@ export default function ListingCard({ listing }) {
             />
           </AspectRatio>
         </Link>
-        <button
+        <motion.button
           onClick={toggleFavorite}
           className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md"
+          whileTap={{ scale: 0.9 }}
         >
           <Heart className={`h-5 w-5 ${isFavorite ? 'text-red-500 fill-current' : 'text-gray-500'}`} />
-        </button>
+        </motion.button>
         <CardContent className="p-4">
           <Link href={`/listings/${listing.id}`}>
             <h3 className="font-semibold text-lg mb-1">{listing.title}</h3>
@@ -48,7 +49,9 @@ export default function ListingCard({ listing }) {
         </CardContent>
         <CardFooter className="p-4 pt-0 flex justify-between items-center">
           <p className="text-lg font-bold">${listing.price} <span className="text-sm font-normal">/ night</span></p>
-          <Button size="sm">View Details</Button>
+          <Link href={`/listings/${listing.id}`}>
+            <Button size="sm">View Details</Button>
+          </Link>
         </CardFooter>
       </Card>
     </motion.div>
