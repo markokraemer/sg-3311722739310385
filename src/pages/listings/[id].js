@@ -12,6 +12,12 @@ import { Badge } from "@/components/ui/badge"
 import { Star, MapPin, User, Home, Shield } from 'lucide-react';
 import PhotoGallery from '@/components/PhotoGallery';
 import ListingMap from '@/components/ListingMap';
+import dynamic from 'next/dynamic';
+
+// Dynamically import ListingMap with no SSR to avoid leaflet issues
+const DynamicListingMap = dynamic(() => import('@/components/ListingMap'), {
+  ssr: false,
+});
 
 export default function ListingDetails() {
   const router = useRouter();
@@ -133,7 +139,7 @@ export default function ListingDetails() {
                 <Card>
                   <CardContent className="pt-6">
                     <h2 className="text-2xl font-semibold mb-4">Location</h2>
-                    <ListingMap location={listing.location} />
+                    <DynamicListingMap coordinates={listing.coordinates} location={listing.location} />
                   </CardContent>
                 </Card>
               </TabsContent>

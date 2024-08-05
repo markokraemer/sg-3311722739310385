@@ -1,30 +1,35 @@
-import { useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import { Icon } from 'leaflet';
 
-export default function ListingMap({ location }) {
-  const mapRef = useRef(null);
+// Fix for default marker icon
+delete Icon.Default.prototype._getIconUrl;
+Icon.Default.mergeOptions({
+  iconRetinaUrl: '/images/marker-icon-2x.png',
+  iconUrl: '/images/marker-icon.png',
+  shadowUrl: '/images/marker-shadow.png',
+});
 
-  useEffect(() => {
-    // This is a placeholder for actual map implementation
-    // You would typically use a library like Google Maps or Mapbox here
-    const map = document.createElement('div');
-    map.style.width = '100%';
-    map.style.height = '300px';
-    map.style.backgroundColor = '#e5e7eb';
-    map.style.display = 'flex';
-    map.style.alignItems = 'center';
-    map.style.justifyContent = 'center';
-    map.innerHTML = `<p>Map of ${location}</p>`;
-    
-    if (mapRef.current) {
-      mapRef.current.appendChild(map);
-    }
+export default function ListingMap({ coordinates, location }) {
+  if (!coordinates) {
+    return <div>Map data not available</div>;
+  }
 
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.innerHTML = '';
-      }
-    };
-  }, [location]);
-
-  return <div ref={mapRef} className="w-full h-[300px] rounded-lg overflow-hidden"></div>;
+  return (
+    <MapContainer 
+      center={[coordinates.lat, coordinates.lng]} 
+      zoom={13} 
+      style={{ height: '400px', width: '100%' }}
+    >
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+      <Marker position={[coordinates.lat, coordinates.lng]}>
+        <Popup>
+          {location}
+        </Popup>
+      </Marker>
+    </MapContainer>
+  );
 }
