@@ -1,15 +1,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Menu, X, User } from 'lucide-react';
+import { Search, Menu, X } from 'lucide-react';
 
 export default function Layout({ children }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
-  const { data: session } = useSession();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -50,18 +48,6 @@ export default function Layout({ children }) {
                 />
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               </div>
-              {session ? (
-                <div className="ml-8 flex items-center">
-                  <Link href="/profile" className="text-base font-medium text-gray-500 hover:text-gray-900 mr-4">
-                    <User className="h-6 w-6" />
-                  </Link>
-                  <Button onClick={() => signOut()}>Sign out</Button>
-                </div>
-              ) : (
-                <Button className="ml-8" onClick={() => router.push('/login')}>
-                  Sign in
-                </Button>
-              )}
             </div>
           </div>
         </div>
@@ -76,20 +62,6 @@ export default function Layout({ children }) {
             <Link href="/host" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
               Become a Host
             </Link>
-            {session ? (
-              <>
-                <Link href="/profile" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
-                  Profile
-                </Link>
-                <button onClick={() => signOut()} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
-                  Sign out
-                </button>
-              </>
-            ) : (
-              <Link href="/login" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
-                Sign in
-              </Link>
-            )}
           </div>
         </div>
       )}
