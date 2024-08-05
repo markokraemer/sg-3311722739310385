@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import ListingCard from '@/components/ListingCard';
 import ListingSkeleton from '@/components/ListingSkeleton';
@@ -9,11 +10,19 @@ import { Select } from '@/components/ui/select';
 import { fetchListings } from '@/lib/api';
 
 export default function Listings() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [priceFilter, setPriceFilter] = useState('');
   const [listings, setListings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const { search } = router.query;
+    if (search) {
+      setSearchTerm(search);
+    }
+  }, [router.query]);
 
   const handleSearch = async () => {
     setIsLoading(true);
@@ -30,7 +39,7 @@ export default function Listings() {
 
   useEffect(() => {
     handleSearch();
-  }, []);
+  }, [searchTerm, priceFilter]);
 
   return (
     <Layout>
