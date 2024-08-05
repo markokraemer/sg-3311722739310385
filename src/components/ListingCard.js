@@ -5,6 +5,7 @@ import { Star, Heart } from "lucide-react"
 import Link from 'next/link'
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 export default function ListingCard({ listing }) {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -22,10 +23,11 @@ export default function ListingCard({ listing }) {
       <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 relative">
         <Link href={`/listings/${listing.id}`}>
           <AspectRatio ratio={4/3}>
-            <img
+            <Image
               src={listing.image}
               alt={listing.title}
-              className="object-cover w-full h-full"
+              layout="fill"
+              objectFit="cover"
             />
           </AspectRatio>
         </Link>
