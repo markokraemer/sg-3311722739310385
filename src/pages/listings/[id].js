@@ -6,6 +6,12 @@ import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
 import ReviewForm from '@/components/ReviewForm';
 import { fetchListingById } from '@/lib/api';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Star, MapPin, User, Home, Shield } from 'lucide-react';
+import PhotoGallery from '@/components/PhotoGallery';
+import ListingMap from '@/components/ListingMap';
 
 export default function ListingDetails() {
   const router = useRouter();
@@ -48,68 +54,133 @@ export default function ListingDetails() {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <img src={listing.image} alt={listing.title} className="w-full h-auto rounded-lg" />
-            <h1 className="text-3xl font-bold mt-4 mb-2">{listing.title}</h1>
-            <p className="text-xl text-gray-600 mb-4">{listing.location}</p>
-            <p className="mb-4">Rating: {listing.rating} ({listing.reviews} reviews)</p>
-            <h2 className="text-2xl font-semibold mb-2">Amenities</h2>
-            <ul className="list-disc list-inside mb-4">
-              <li>Wi-Fi</li>
-              <li>Kitchen</li>
-              <li>Free parking</li>
-              <li>Air conditioning</li>
-            </ul>
-            <h2 className="text-2xl font-semibold mb-2">House Rules</h2>
-            <ul className="list-disc list-inside mb-4">
-              <li>No smoking</li>
-              <li>No parties or events</li>
-              <li>Check-in time is 2PM - 8PM</li>
-            </ul>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <h1 className="text-4xl font-bold mb-2">{listing.title}</h1>
+            <div className="flex items-center mb-4">
+              <MapPin className="h-5 w-5 text-gray-500 mr-2" />
+              <p className="text-xl text-gray-600">{listing.location}</p>
+            </div>
+            <div className="mb-6">
+              <PhotoGallery images={listing.images || [listing.image]} />
+            </div>
+            <Tabs defaultValue="details" className="w-full">
+              <TabsList>
+                <TabsTrigger value="details">Details</TabsTrigger>
+                <TabsTrigger value="amenities">Amenities</TabsTrigger>
+                <TabsTrigger value="reviews">Reviews</TabsTrigger>
+                <TabsTrigger value="location">Location</TabsTrigger>
+              </TabsList>
+              <TabsContent value="details">
+                <Card>
+                  <CardContent className="pt-6">
+                    <h2 className="text-2xl font-semibold mb-4">About this place</h2>
+                    <p className="mb-4">{listing.description}</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex items-center">
+                        <Home className="h-5 w-5 mr-2" />
+                        <span>Entire home</span>
+                      </div>
+                      <div className="flex items-center">
+                        <User className="h-5 w-5 mr-2" />
+                        <span>Up to {listing.maxGuests} guests</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Shield className="h-5 w-5 mr-2" />
+                        <span>Enhanced Clean</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="amenities">
+                <Card>
+                  <CardContent className="pt-6">
+                    <h2 className="text-2xl font-semibold mb-4">Amenities</h2>
+                    <div className="grid grid-cols-2 gap-4">
+                      {listing.amenities && listing.amenities.map((amenity, index) => (
+                        <div key={index} className="flex items-center">
+                          <Badge variant="outline" className="mr-2">{amenity}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="reviews">
+                <Card>
+                  <CardContent className="pt-6">
+                    <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
+                    <div className="flex items-center mb-4">
+                      <Star className="h-5 w-5 text-yellow-400 mr-1" />
+                      <span className="font-bold mr-2">{listing.rating}</span>
+                      <span className="text-gray-600">({listing.reviews} reviews)</span>
+                    </div>
+                    {reviews.map((review, index) => (
+                      <div key={index} className="mb-4 p-4 border rounded">
+                        <div className="flex items-center mb-2">
+                          <Star className="h-4 w-4 text-yellow-400 mr-1" />
+                          <span className="font-bold">{review.rating}/5</span>
+                        </div>
+                        <p>{review.comment}</p>
+                      </div>
+                    ))}
+                    <ReviewForm onSubmit={handleReviewSubmit} />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="location">
+                <Card>
+                  <CardContent className="pt-6">
+                    <h2 className="text-2xl font-semibold mb-4">Location</h2>
+                    <ListingMap location={listing.location} />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </div>
           <div>
-            <div className="border rounded-lg p-6 shadow-lg mb-8">
-              <p className="text-2xl font-bold mb-4">${listing.price} / night</p>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Check-in</label>
-                <Calendar
-                  mode="single"
-                  selected={startDate}
-                  onSelect={setStartDate}
-                  className="rounded-md border"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Check-out</label>
-                <Calendar
-                  mode="single"
-                  selected={endDate}
-                  onSelect={setEndDate}
-                  className="rounded-md border"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Guests</label>
-                <Input
-                  type="number"
-                  min="1"
-                  value={guests}
-                  onChange={(e) => setGuests(parseInt(e.target.value))}
-                />
-              </div>
-              <Button className="w-full" onClick={handleBooking}>Book Now</Button>
-            </div>
-            <div>
-              <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
-              {reviews.map((review, index) => (
-                <div key={index} className="mb-4 p-4 border rounded">
-                  <p>Rating: {review.rating}/5</p>
-                  <p>{review.comment}</p>
+            <Card className="sticky top-8">
+              <CardContent className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <p className="text-2xl font-bold">${listing.price} <span className="text-base font-normal text-gray-600">/ night</span></p>
+                  <div className="flex items-center">
+                    <Star className="h-5 w-5 text-yellow-400 mr-1" />
+                    <span className="font-bold">{listing.rating}</span>
+                  </div>
                 </div>
-              ))}
-              <ReviewForm onSubmit={handleReviewSubmit} />
-            </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Check-in</label>
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={setStartDate}
+                    className="rounded-md border"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Check-out</label>
+                  <Calendar
+                    mode="single"
+                    selected={endDate}
+                    onSelect={setEndDate}
+                    className="rounded-md border"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Guests</label>
+                  <Input
+                    type="number"
+                    min="1"
+                    max={listing.maxGuests}
+                    value={guests}
+                    onChange={(e) => setGuests(parseInt(e.target.value))}
+                  />
+                </div>
+                <Button className="w-full" onClick={handleBooking}>Book Now</Button>
+                <p className="text-center text-sm text-gray-500 mt-4">You won't be charged yet</p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
