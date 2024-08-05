@@ -1,24 +1,38 @@
-import { Button } from "@/components/ui/button"
+import Layout from '@/components/Layout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
+import ListingCard from '@/components/ListingCard';
+import { featuredListings } from '@/data/listings';
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to your App
-        </h1>
-
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="p-3 font-mono text-lg bg-gray-100 rounded-md">
-            pages/index.js
-          </code>
-        </p>
-
-        <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
-          <Button className="mt-4">Hello World</Button>
+    <Layout>
+      <div className="bg-gradient-to-r from-primary to-pink-500 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <h1 className="text-4xl font-bold mb-6">Find your next stay</h1>
+          <p className="text-xl mb-8">Search low prices on homes, apartments, and much more...</p>
+          <div className="flex items-center bg-white rounded-full p-2 max-w-2xl">
+            <Input
+              type="text"
+              placeholder="Where are you going?"
+              className="flex-grow border-none focus:ring-0"
+            />
+            <Button size="icon" className="rounded-full">
+              <Search className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
-      </main>
-    </div>
-  )
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h2 className="text-3xl font-bold mb-8">Featured Listings</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {featuredListings.map((listing) => (
+            <ListingCard key={listing.id} listing={listing} />
+          ))}
+        </div>
+      </div>
+    </Layout>
+  );
 }
